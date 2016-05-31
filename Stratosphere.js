@@ -1,27 +1,25 @@
 import React, { Component } from 'react'
 import {
-  AppRegistry,
   StyleSheet,
+  Image,
   Text,
   TextInput,
-  View,
-  Image
+  View
 } from 'react-native'
 import Forecast from './Forecast'
+
+const api = {
+  route: 'http://api.openweathermap.org/data/2.5/weather?',
+  key: 'b4afab9fa539c83f01699f131bc30ab7' // if you're looking at this, go ahead, steal it.
+}
 
 class Stratosphere extends Component {
   constructor(props) {
     super(props)
 
-    this.route = 'http://api.openweathermap.org/data/2.5/weather?'
-    this.apikey = 'b4afab9fa539c83f01699f131bc30ab7' // if you're looking at this, go ahead, steal it.
     this.state = {
       zip: '',
-      forecast: {
-        main: 'Overcast',
-        description: 'super shitty',
-        temp: 46
-      }
+      forecast: null
     }
   }
 
@@ -42,7 +40,7 @@ class Stratosphere extends Component {
 
   handleTextChange(e) {
     const zip = e.nativeEvent.text
-    const url = `${this.route}q=${zip}&units=imperial&mode=json&appid=${this.apikey}`
+    const url = `${api.route}q=${zip}&units=imperial&mode=json&appid=${api.key}`
 
     this.setState({ zip })
 
@@ -54,17 +52,28 @@ class Stratosphere extends Component {
   }
 
   render() {
+    const content = this.state.forecast !== null ? (
+      <Forecast
+        main={this.state.forecast.main}
+        description={this.state.forecast.description}
+        temp={this.state.forecast.temp}
+      />
+    ) : null
+
     return (
       <View style={styles.container}>
         <Image
           style={styles.backdrop}
-          source={require('image!sky')}
+          source={require('./ios/Stratosphere/Images.xcassets/Image.imageset/sky.png')}
           resizeMode='cover'>
+
           <View style={styles.overlay}>
+
             <View style={styles.row}>
               <Text style={styles.mainText}>
                 Stratosphere: Where weather is, also.
               </Text>
+
               <View style={styles.zipContainer}>
                 <TextInput
                   style={[styles.zipCode, styles.mainText]}
@@ -73,11 +82,9 @@ class Stratosphere extends Component {
                 />
               </View>
             </View>
-            <Forecast
-              main={this.state.forecast.main}
-              description={this.state.forecast.description}
-              temp={this.state.forecast.temp}
-            />
+
+            {content}
+
           </View>
         </Image>
       </View>
@@ -98,7 +105,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     paddingTop: 5,
-    backgroundColor: '#000000',
+    backgroundColor: '#c1c1c1',
     opacity: 0.5,
     flexDirection: 'column',
     alignItems: 'center'
@@ -124,7 +131,7 @@ const styles = StyleSheet.create({
   mainText: {
     flex: 1,
     fontSize: baseFontSize,
-    color: '#FFFFFF'
+    color: '#011101'
   }
 })
 
