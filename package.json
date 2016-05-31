@@ -1,0 +1,23 @@
+{
+  "name": "Stratosphere",
+  "version": "0.0.1",
+  "description": "Let's pretend google didn't exist making this app convenient and useful.",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "author": "Evan Turner",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:evturn/stratosphere.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evturn/stratosphere/issues"
+  },
+  "homepage": "https://github.com/evturn/stratosphere",
+  "dependencies": {
+    "react": "^15.0.2",
+    "react-native": "^0.26.2"
+  }
+}
