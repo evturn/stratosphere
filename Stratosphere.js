@@ -13,6 +13,8 @@ class Stratosphere extends Component {
   constructor(props) {
     super(props)
 
+    this.route = 'http://api.openweathermap.org/data/2.5/weather?'
+    this.apikey = 'b4afab9fa539c83f01699f131bc30ab7' // if you're looking at this, go ahead, steal it.
     this.state = {
       zip: '',
       forecast: {
@@ -23,20 +25,41 @@ class Stratosphere extends Component {
     }
   }
 
+  setForecast(response) {
+    const {
+      weather: [ weather ],
+      main
+    } = response
+
+    return {
+      forecast: {
+        main: weather.main,
+        description: weather.description,
+        temp: main.temp
+      }
+    }
+  }
+
   handleTextChange(e) {
-    console.log(e.nativeEvent.text)
-    this.setState({
-      zip: e.nativeEvent.text
-    })
+    const zip = e.nativeEvent.text
+    const url = `${this.route}q=${zip}&units=imperial&mode=json&appid=${this.apikey}`
+
+    this.setState({ zip })
+
+    fetch(url)
+      .then(x => x.json())
+      .then(this.setForecast)
+      .then(x => this.setState(x))
+      .catch(e => console.warn(e))
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Image
+          style={styles.backdrop}
           source={require('image!sky')}
-          resizeMode='cover'
-          style={styles.backdrop}>
+          resizeMode='cover'>
           <View style={styles.overlay}>
             <View style={styles.row}>
               <Text style={styles.mainText}>
@@ -44,7 +67,7 @@ class Stratosphere extends Component {
               </Text>
               <View style={styles.zipContainer}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.zipCode, styles.mainText]}
                   returnKeyType='go'
                   onSubmitEditing={e => this.handleTextChange(e)}
                 />
