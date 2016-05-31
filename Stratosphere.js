@@ -6,13 +6,19 @@ import {
   TextInput,
   View
 } from 'react-native'
+import Forecast from './Forecast'
 
 class Stratosphere extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      zip: ''
+      zip: '',
+      forecast: {
+        main: 'Overcast',
+        description: 'super shitty',
+        temp: 46
+      }
     }
   }
 
@@ -29,11 +35,17 @@ class Stratosphere extends Component {
         <Text style={styles.welcome}>
           Welcome to React Náive!
         </Text>
+        <Forecast
+          main={this.state.forecast.main}
+          description={this.state.forecast.description}
+          temp={this.state.forecast.temp}
+        />
         <Text style={styles.welcome}>
           The weather is terrible around {this.state.zip}.
         </Text>
         <TextInput
           style={styles.input}
+          returnKeyType='go'
           onChange={e => this.handleTextChange(e)} />
         <Text style={styles.instructions}>
           Shake it and rub it down for dev menu
