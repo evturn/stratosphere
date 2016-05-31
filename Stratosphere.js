@@ -18,32 +18,41 @@ class Stratosphere extends Component {
     super(props)
 
     this.state = {
-      zip: '',
-      forecast: null
+      query: '',
+      forecast: null,
+      text: ''
     }
   }
 
+  componentDidMount() {
+    this.fetchData(this.createRequestUrl())
+  }
+
   setForecast(response) {
+    console.log(response)
     const {
       weather: [ weather ],
-      main
+      main,
+      name
     } = response
 
     return {
       forecast: {
         main: weather.main,
         description: weather.description,
-        temp: main.temp
+        temp: main.temp,
+        name
       }
     }
   }
 
-  handleTextChange(e) {
-    const zip = e.nativeEvent.text
-    const url = `${api.route}q=${zip}&units=imperial&mode=json&appid=${api.key}`
+  createRequestUrl(location) {
+    const query = location ? location.split(' ').join('%20') : 'Prospect%20Heights,NY'
+    this.setState({ query, text: '' })
+    return `${api.route}q=${query}&units=imperial&mode=json&appid=${api.key}`
+  }
 
-    this.setState({ zip })
-
+  fetchData(url) {
     fetch(url)
       .then(x => x.json())
       .then(this.setForecast)
@@ -51,39 +60,51 @@ class Stratosphere extends Component {
       .catch(e => console.warn(e))
   }
 
-  render() {
-    const content = this.state.forecast !== null ? (
-      <Forecast
-        main={this.state.forecast.main}
-        description={this.state.forecast.description}
-        temp={this.state.forecast.temp}
-      />
-    ) : null
+  handleSubmit(e) {
+    const location = e.nativeEvent.text
+    this.fetchData(this.createRequestUrl(location))
+  }
 
+  render() {
     return (
       <View style={styles.container}>
         <Image
           style={styles.backdrop}
           source={require('./ios/Stratosphere/Images.xcassets/Image.imageset/sky.png')}
-          resizeMode='cover'>
+          resizeMode="cover">
 
           <View style={styles.overlay}>
 
-            <View style={styles.row}>
-              <Text style={styles.mainText}>
-                Stratosphere: Where weather is, also.
+              <Text style={[styles.mainText, styles.header]}>
+                Stratosphere
               </Text>
+              <Text style={styles.subtitle}>Readable Weather.</Text>
 
+            <View style={styles.row}>
               <View style={styles.zipContainer}>
+
                 <TextInput
+                  ref={i => this['🍟'] = i}
                   style={[styles.zipCode, styles.mainText]}
-                  returnKeyType='go'
-                  onSubmitEditing={e => this.handleTextChange(e)}
+                  returnKeyType="go"
+                  onChangeText={text => this.setState({ text })}
+                  onSubmitEditing={e => this.handleSubmit(e)}
+                  value={this.state.text}
                 />
               </View>
+
             </View>
 
-            {content}
+            <Text style={styles.caption}>Some location</Text>
+
+            {this.state.forecast !== null ? (
+              <Forecast
+                main={this.state.forecast.main}
+                name={this.state.forecast.name}
+                description={this.state.forecast.description}
+                temp={this.state.forecast.temp}
+              />
+            ) : null}
 
           </View>
         </Image>
@@ -94,10 +115,35 @@ class Stratosphere extends Component {
 
 const baseFontSize = 16
 const styles = StyleSheet.create({
+  header: {
+    paddingTop: 30,
+    fontSize: 28,
+    fontStyle: 'italic'
+  },
   container: {
     flex: 1,
     alignItems: 'center',
     paddingTop: 30
+  },
+  title: {
+    flex: 1,
+    flexDirection: 'row',
+    color: '#FFFFFF'
+  },
+  subtitle: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    color: '#FFFFFF'
+  },
+  caption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    color: '#FFFFFF',
+    paddingBottom: 20,
+    fontSize: 12
   },
   backdrop: {
     flex: 1,
@@ -105,7 +151,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     paddingTop: 5,
-    backgroundColor: '#c1c1c1',
+    backgroundColor: '#000000',
     opacity: 0.5,
     flexDirection: 'column',
     alignItems: 'center'
@@ -115,23 +161,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'flex-start',
-    padding: 30
+    padding: 20
   },
   zipContainer: {
     flex: 1,
     borderBottomColor: '#DDDDDD',
     borderBottomWidth: 1,
-    marginLeft: 5,
-    marginTop: 3
+    marginBottom: -20
   },
   zipCode: {
-    width: 50,
-    height: baseFontSize,
+    flex: 1,
+    width: 200,
+    height: 20,
+    fontSize: 40,
+    textAlign: 'center'
   },
   mainText: {
     flex: 1,
     fontSize: baseFontSize,
-    color: '#011101'
+    color: '#FFFFFF'
   }
 })
 

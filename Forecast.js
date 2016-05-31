@@ -13,10 +13,13 @@ class Forecast extends Component {
           {this.props.main}
         </Text>
         <Text style={styles.mainText}>
-          Current conditions: <Text style={styles.desc}>{this.props.description}</Text>
+          but more like <Text style={styles.desc}>{this.props.description}</Text>
         </Text>
         <Text style={styles.bigText}>
           <Text style={styles.temp}>{this.props.temp}°F</Text>
+        </Text>
+        <Text style={[styles.mainText, styles.name]}>
+          {this.props.name}
         </Text>
       </View>
     );
@@ -37,6 +40,10 @@ const styles = StyleSheet.create({
   },
   temp: {
     fontSize: 54
+  },
+  name: {
+    fontSize: 24,
+    paddingBottom: 30
   },
   mainText: {
     flex: 1,
