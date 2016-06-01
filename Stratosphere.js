@@ -29,19 +29,31 @@ class Stratosphere extends Component {
   }
 
   setForecast(response) {
-    console.log(response)
     const {
       weather: [ weather ],
       main,
       name
     } = response
+    const farenheit = {
+      symbol: '°F',
+      current: Math.floor(main.temp),
+      high: Math.floor(main.temp_min),
+      low: Math.floor(main.temp_max)
+    }
 
     return {
       forecast: {
         main: weather.main,
         description: weather.description,
-        temp: main.temp,
-        name
+        image: `http://openweathermap.org/img/w/${weather.icon}.png`,
+        name,
+        farenheit,
+        celsius: {
+          symbol: '°C',
+          current: Math.floor((farenheit.current - 32) / 1.8),
+          high: Math.floor((farenheit.high - 32) / 1.8),
+          low: Math.floor((farenheit.low - 32) / 1.8)
+        }
       }
     }
   }
@@ -68,52 +80,37 @@ class Stratosphere extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          style={styles.backdrop}
-          source={require('./ios/Stratosphere/Images.xcassets/Image.imageset/sky.png')}
-          resizeMode="cover">
+
 
           <View style={styles.overlay}>
 
-              <Text style={[styles.mainText, styles.header]}>
-                Stratosphere
-              </Text>
-              <Text style={styles.subtitle}>Readable Weather.</Text>
+            {this.state.forecast !== null ? (
+              <Forecast {...this.state.forecast} />
+            ) : null}
 
             <View style={styles.row}>
-              <View style={styles.zipContainer}>
-
+              <View style={styles.inputView}>
                 <TextInput
                   ref={i => this['🍟'] = i}
-                  style={[styles.zipCode, styles.mainText]}
+                  style={styles.search}
                   returnKeyType="go"
                   onChangeText={text => this.setState({ text })}
                   onSubmitEditing={e => this.handleSubmit(e)}
                   value={this.state.text}
+                  selectionColor="#ffffff"
                 />
               </View>
-
             </View>
-
-            <Text style={styles.caption}>Some location</Text>
-
-            {this.state.forecast !== null ? (
-              <Forecast
-                main={this.state.forecast.main}
-                name={this.state.forecast.name}
-                description={this.state.forecast.description}
-                temp={this.state.forecast.temp}
-              />
-            ) : null}
-
+            <Text style={styles.caption}>Find some other location</Text>
           </View>
-        </Image>
+
       </View>
     )
   }
 }
 
 const baseFontSize = 16
+const fontFamily = 'helveticaneue-thin'
 const styles = StyleSheet.create({
   header: {
     paddingTop: 30,
@@ -122,8 +119,10 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    flexDirection: 'column',
     alignItems: 'center',
-    paddingTop: 30
+    paddingTop: 30,
+    backgroundColor: '#7BAFD4'
   },
   title: {
     flex: 1,
@@ -145,16 +144,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     fontSize: 12
   },
-  backdrop: {
-    flex: 1,
-    flexDirection: 'column'
-  },
   overlay: {
-    paddingTop: 5,
-    backgroundColor: '#000000',
-    opacity: 0.5,
+    paddingTop: 75,
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingBottom: 125
   },
   row: {
     flex: 1,
@@ -163,21 +157,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     padding: 20
   },
-  zipContainer: {
+  inputView: {
     flex: 1,
-    borderBottomColor: '#DDDDDD',
+    borderBottomColor: '#f8f8f8',
     borderBottomWidth: 1,
-    marginBottom: -20
+    marginBottom: -15,
+    paddingTop: 70
   },
-  zipCode: {
+  search: {
     flex: 1,
-    width: 200,
-    height: 20,
-    fontSize: 40,
-    textAlign: 'center'
+    fontFamily,
+    width: 150,
+    height: 30,
+    fontSize: 24,
+    textAlign: 'center',
+    color: '#ffffff'
   },
   mainText: {
     flex: 1,
+    fontFamily,
     fontSize: baseFontSize,
     color: '#FFFFFF'
   }
