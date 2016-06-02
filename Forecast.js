@@ -25,20 +25,6 @@ class Forecast extends Component {
     })
   }
 
-  setTempColor(temp) {
-    if (temp < 70) {
-      if (temp < 45) {
-        styles.cold
-      } else {
-        style.cool
-      }
-    } else if (temp > 90) {
-      styles.hot
-    } else {
-      styles.warm
-    }
-  }
-
   convertTemp(converted) {
     const { celsius, farenheit } = this.props
     const scale = converted ? celsius : farenheit

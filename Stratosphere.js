@@ -7,10 +7,12 @@ import {
   View
 } from 'react-native'
 import Forecast from './Forecast'
+import LocationButton from './LocationButton'
 
 const api = {
   route: 'http://api.openweathermap.org/data/2.5/weather?',
-  key: 'b4afab9fa539c83f01699f131bc30ab7' // if you're looking at this, go ahead, steal it.
+  key: 'b4afab9fa539c83f01699f131bc30ab7', // if you're looking at this, go ahead, steal it.
+  units: '&units=imperial&mode=json'
 }
 
 class Stratosphere extends Component {
@@ -25,7 +27,7 @@ class Stratosphere extends Component {
   }
 
   componentDidMount() {
-    this.fetchData(this.createRequestUrl())
+    this.fetchData(this.createSearchRequestUrl())
   }
 
   setForecast(response) {
@@ -58,10 +60,14 @@ class Stratosphere extends Component {
     }
   }
 
-  createRequestUrl(location) {
+  createCoordinateRequestUrl(lat, lon) {
+    return `${api.route}lat=${lat}&lon=${lon}${api.units}&appid=${api.key}`
+  }
+
+  createSearchRequestUrl(location) {
     const query = location ? location.split(' ').join('%20') : 'Prospect%20Heights,NY'
     this.setState({ query, text: '' })
-    return `${api.route}q=${query}&units=imperial&mode=json&appid=${api.key}`
+    return `${api.route}q=${query}${api.units}&appid=${api.key}`
   }
 
   fetchData(url) {
@@ -72,9 +78,13 @@ class Stratosphere extends Component {
       .catch(e => console.warn(e))
   }
 
-  handleSubmit(e) {
+  handleCoordinateSubmit(lat, lon) {
+    this.fetchData(this.createCoordinateRequestUrl(lat, lon))
+  }
+
+  handleQuerySubmit(e) {
     const location = e.nativeEvent.text
-    this.fetchData(this.createRequestUrl(location))
+    this.fetchData(this.createSearchRequestUrl(location))
   }
 
   render() {
@@ -95,13 +105,16 @@ class Stratosphere extends Component {
                   style={styles.search}
                   returnKeyType="go"
                   onChangeText={text => this.setState({ text })}
-                  onSubmitEditing={e => this.handleSubmit(e)}
+                  onSubmitEditing={e => this.handleQuerySubmit(e)}
                   value={this.state.text}
                   selectionColor="#ffffff"
                 />
               </View>
             </View>
             <Text style={styles.caption}>Find some other location</Text>
+            <LocationButton
+              onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+            />
           </View>
 
       </View>
