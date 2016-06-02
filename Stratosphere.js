@@ -21,7 +21,8 @@ class Stratosphere extends Component {
 
     this.state = {
       forecast: null,
-      text: ''
+      text: '',
+      fetching: true
     }
   }
 
@@ -56,7 +57,8 @@ class Stratosphere extends Component {
           high: Math.floor((farenheit.high - 32) / 1.8),
           low: Math.floor((farenheit.low - 32) / 1.8)
         }
-      }
+      },
+      fetching: false
     }
   }
 
@@ -69,6 +71,7 @@ class Stratosphere extends Component {
   }
 
   fetchData(url) {
+    this.setState({ fetching: true })
     fetch(url)
       .then(x => x.json())
       .then(this.setForecast)
@@ -94,27 +97,33 @@ class Stratosphere extends Component {
       <View style={styles.container}>
         <View style={styles.overlay}>
 
-        {this.state.forecast !== null ?
-          <Forecast {...this.state.forecast} /> :
-          <Text>Loading...</Text>}
+          {this.state.forecast === null ? <Text>Loading...</Text> : (
+            <View>
+              <Forecast {...this.state.forecast} />
 
-          <View style={styles.row}>
-            <View style={styles.inputView}>
-              <TextInput
-                ref={i => this['🍟'] = i}
-                style={styles.search}
-                returnKeyType="go"
-                onChangeText={text => this.setState({ text })}
-                onSubmitEditing={e => this.handleQuerySubmit(e)}
-                value={this.state.text}
-                selectionColor="#ffffff"
-              />
+              <View style={styles.row}>
+                <LocationButton
+                  fetching={this.state.fetching}
+                  onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+                />
+              </View>
+
+              <View style={styles.row}>
+                <View style={styles.inputView}>
+                  <TextInput
+                    ref={i => this['🍟'] = i}
+                    style={styles.search}
+                    returnKeyType="go"
+                    onChangeText={text => this.setState({ text })}
+                    onSubmitEditing={e => this.handleQuerySubmit(e)}
+                    value={this.state.text}
+                    selectionColor="#ffffff"
+                  />
+                </View>
+              </View>
+              <Text style={styles.caption}>Find some other location</Text>
             </View>
-          </View>
-          <Text style={styles.caption}>Find some other location</Text>
-          <LocationButton
-            onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
-          />
+          )}
         </View>
 
       </View>
@@ -152,7 +161,7 @@ const styles = StyleSheet.create({
   caption: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    textAlign: 'center',
     color: '#FFFFFF',
     paddingBottom: 20,
     fontSize: 12
@@ -175,12 +184,11 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f8f8f8',
     borderBottomWidth: 1,
     marginBottom: -15,
-    paddingTop: 70
+    paddingTop: 30
   },
   search: {
     flex: 1,
     fontFamily,
-    width: 150,
     height: 30,
     fontSize: 24,
     textAlign: 'center',

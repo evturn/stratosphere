@@ -72,15 +72,13 @@ class Forecast extends Component {
         </View>
 
         <Text style={styles.temps}>HI: {high}°  •  LO: {low}°</Text>
-
       </View>
-    );
+    )
   }
 }
 
 const fontFamily = 'helveticaneue-thin'
 const styles = StyleSheet.create({
-
   scale: {
     fontSize: 14,
     color: '#ffffff',
@@ -100,17 +98,16 @@ const styles = StyleSheet.create({
   },
   name: {
     fontFamily,
-    flex: 2,
+    flex: 1,
     fontSize: 30,
     textAlign: 'center',
-    margin: 10,
     color: '#FFFFFF'
   },
   temp: {
     fontFamily,
     fontSize: 90,
     flex: 2,
-    margin: 10,
+    paddingBottom: 10,
     marginRight: -10,
     textAlign: 'center'
   },
@@ -135,8 +132,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily,
     textAlign: 'center',
-    paddingTop: 10,
-    paddingBottom: 20
+    // paddingTop: 10,
+    // paddingBottom: 20
   },
   temps: {
     flex: 1,
