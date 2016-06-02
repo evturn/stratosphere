@@ -20,14 +20,13 @@ class Stratosphere extends Component {
     super(props)
 
     this.state = {
-      query: '',
       forecast: null,
       text: ''
     }
   }
 
   componentDidMount() {
-    this.fetchData(this.createSearchRequestUrl())
+    this.fetchData(this.createSearchRequestUrl('Prospect%20Heights,NY'))
   }
 
   setForecast(response) {
@@ -36,11 +35,12 @@ class Stratosphere extends Component {
       main,
       name
     } = response
+
     const farenheit = {
       symbol: '°F',
       current: Math.floor(main.temp),
-      high: Math.floor(main.temp_min),
-      low: Math.floor(main.temp_max)
+      low: Math.floor(main.temp_min),
+      high: Math.floor(main.temp_max)
     }
 
     return {
@@ -64,9 +64,7 @@ class Stratosphere extends Component {
     return `${api.route}lat=${lat}&lon=${lon}${api.units}&appid=${api.key}`
   }
 
-  createSearchRequestUrl(location) {
-    const query = location ? location.split(' ').join('%20') : 'Prospect%20Heights,NY'
-    this.setState({ query, text: '' })
+  createSearchRequestUrl(query) {
     return `${api.route}q=${query}${api.units}&appid=${api.key}`
   }
 
@@ -83,39 +81,41 @@ class Stratosphere extends Component {
   }
 
   handleQuerySubmit(e) {
-    const location = e.nativeEvent.text
-    this.fetchData(this.createSearchRequestUrl(location))
+    this.setState({ text: '' })
+    this.fetchData(
+      this.createSearchRequestUrl(
+        e.nativeEvent.text.split(' ').join('%20')
+      )
+    )
   }
 
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.overlay}>
 
+        {this.state.forecast !== null ?
+          <Forecast {...this.state.forecast} /> :
+          <Text>Loading...</Text>}
 
-          <View style={styles.overlay}>
-
-            {this.state.forecast !== null ? (
-              <Forecast {...this.state.forecast} />
-            ) : null}
-
-            <View style={styles.row}>
-              <View style={styles.inputView}>
-                <TextInput
-                  ref={i => this['🍟'] = i}
-                  style={styles.search}
-                  returnKeyType="go"
-                  onChangeText={text => this.setState({ text })}
-                  onSubmitEditing={e => this.handleQuerySubmit(e)}
-                  value={this.state.text}
-                  selectionColor="#ffffff"
-                />
-              </View>
+          <View style={styles.row}>
+            <View style={styles.inputView}>
+              <TextInput
+                ref={i => this['🍟'] = i}
+                style={styles.search}
+                returnKeyType="go"
+                onChangeText={text => this.setState({ text })}
+                onSubmitEditing={e => this.handleQuerySubmit(e)}
+                value={this.state.text}
+                selectionColor="#ffffff"
+              />
             </View>
-            <Text style={styles.caption}>Find some other location</Text>
-            <LocationButton
-              onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
-            />
           </View>
+          <Text style={styles.caption}>Find some other location</Text>
+          <LocationButton
+            onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+          />
+        </View>
 
       </View>
     )

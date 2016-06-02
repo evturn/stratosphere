@@ -25,7 +25,7 @@ class LocationButton extends Component {
   render() {
     return (
       <Button
-        label="Use CurrentLocation"
+        label="Use Current Location"
         style={styles.locationButton}
         onPress={_ => this.onPress()}
       />
