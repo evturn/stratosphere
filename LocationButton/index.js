@@ -9,7 +9,7 @@ const geoOptions = {
 }
 
 class LocationButton extends Component {
-  onPress() {
+  getExactLocation() {
     navigator.geolocation.getCurrentPosition(
       initialPosition => (
         this.props.onGetCoords(
@@ -27,7 +27,7 @@ class LocationButton extends Component {
       <Button
         label={this.props.fetching ? 'Locating...' : 'Use Current Location'}
         style={styles.locationButton}
-        onPress={_ => this.onPress()}
+        onPress={_ => this.getExactLocation()}
       />
     )
   }

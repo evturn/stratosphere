@@ -50,7 +50,7 @@ class Forecast extends Component {
     } = this.state
     const midTemp = !converted ? 70 : 21
     const tempColor = current < midTemp ? styles.cool : styles.warm
-
+    console.log(main)
     return (
       <View>
         <Text style={styles.name}>{name}</Text>
@@ -69,9 +69,9 @@ class Forecast extends Component {
           />
           <Text style={styles.shortDesc}>{main}</Text>
           <Text style={styles.extendedDesc}>specifically, {description}.</Text>
+          <Text style={styles.temps}>HI: {high}°  •  LO: {low}°</Text>
         </View>
 
-        <Text style={styles.temps}>HI: {high}°  •  LO: {low}°</Text>
       </View>
     )
   }
@@ -106,24 +106,27 @@ const styles = StyleSheet.create({
   temp: {
     fontFamily,
     fontSize: 90,
-    flex: 2,
-    paddingBottom: 10,
+    flex: 3,
     marginRight: -10,
     textAlign: 'center'
   },
   imageView: {
-    flex: 1,
-    alignItems: 'center'
+    flex: 3,
+    alignItems: 'center',
+    paddingBottom: 20
   },
   icon: {
+    flex: 1,
     width: 50,
-    height: 50
+    height: 50,
+    paddingBottom: 40
   },
   shortDesc: {
     fontFamily,
     flex: 1,
     fontSize: 22,
     textAlign: 'center',
+    paddingBottom: 20,
     color: '#FFFFFF'
   },
   extendedDesc: {
@@ -132,8 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily,
     textAlign: 'center',
-    // paddingTop: 10,
-    // paddingBottom: 20
+    paddingBottom: 10
   },
   temps: {
     flex: 1,

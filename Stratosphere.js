@@ -108,40 +108,37 @@ class Stratosphere extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.overlay}>{this.state.forecast !== null ? (
-          <View>
-            <Forecast {...this.state.forecast} />
-            <View style={styles.row}>
-              <LocationButton
-                fetching={this.state.fetching}
-                onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+      <View style={styles.root}>{this.state.forecast !== null ? (
+        <View>
+          <Forecast {...this.state.forecast} />
+          <View style={styles.row}>
+            <LocationButton
+              fetching={this.state.fetching}
+              onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+            />
+          </View>
+          <View style={styles.row}>
+            <View style={styles.inputView}>
+              <TextInput
+                ref={i => this['🍟'] = i}
+                style={styles.search}
+                returnKeyType="go"
+                onChangeText={text => this.setState({ text })}
+                onSubmitEditing={e => this.handleQuerySubmit(e)}
+                value={this.state.text}
+                selectionColor="#ffffff"
               />
             </View>
-            <View style={styles.row}>
-              <View style={styles.inputView}>
-                <TextInput
-                  ref={i => this['🍟'] = i}
-                  style={styles.search}
-                  returnKeyType="go"
-                  onChangeText={text => this.setState({ text })}
-                  onSubmitEditing={e => this.handleQuerySubmit(e)}
-                  value={this.state.text}
-                  selectionColor="#ffffff"
-                />
-              </View>
-            </View>
-            <Text style={styles.caption}>{this.state.message}</Text>
           </View>
-          ) : (
-          <Text>Loading...</Text>
-        )}</View>
-      </View>
+          <Text style={styles.caption}>{this.state.message}</Text>
+        </View>
+        ) : (
+        <Text>Loading...</Text>
+      )}</View>
     )
   }
 }
 
-const baseFontSize = 16
 const fontFamily = 'helveticaneue-thin'
 const styles = StyleSheet.create({
   header: {
@@ -149,11 +146,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontStyle: 'italic'
   },
-  container: {
+  root: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    paddingTop: 30,
+    paddingTop: 100,
     backgroundColor: '#7BAFD4'
   },
   title: {
@@ -175,12 +172,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     paddingBottom: 20,
     fontSize: 12
-  },
-  overlay: {
-    paddingTop: 75,
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingBottom: 125
   },
   row: {
     flex: 1,
@@ -207,7 +198,7 @@ const styles = StyleSheet.create({
   mainText: {
     flex: 1,
     fontFamily,
-    fontSize: baseFontSize,
+    fontSize: 16,
     color: '#FFFFFF'
   }
 })
