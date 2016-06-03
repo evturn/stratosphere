@@ -19,6 +19,7 @@ class Forecast extends Component {
   componentWillReceiveProps(nextProps) {
     const { celsius, farenheit } = nextProps
     const scale = this.state.converted ? celsius : farenheit
+
     this.setState({
       ...this.state,
       ...scale
@@ -28,6 +29,7 @@ class Forecast extends Component {
   convertTemp(converted) {
     const { celsius, farenheit } = this.props
     const scale = converted ? celsius : farenheit
+
     this.setState({
       converted,
       ...scale
@@ -41,6 +43,7 @@ class Forecast extends Component {
       name,
       image,
     } = this.props
+
     const {
       current,
       symbol,
@@ -48,9 +51,10 @@ class Forecast extends Component {
       low,
       converted
     } = this.state
+
     const midTemp = !converted ? 70 : 21
     const tempColor = current < midTemp ? styles.cool : styles.warm
-    console.log(main)
+
     return (
       <View>
         <Text style={styles.name}>{name}</Text>

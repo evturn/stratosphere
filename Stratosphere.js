@@ -140,7 +140,6 @@ class Stratosphere extends Component {
   }
 }
 
-const fontFamily = 'helveticaneue-thin'
 const styles = StyleSheet.create({
   header: {
     paddingTop: 30,
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
   },
   search: {
     flex: 1,
-    fontFamily,
+    fontFamily: 'helveticaneue-thin',
     height: 30,
     fontSize: 24,
     textAlign: 'center',
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
   },
   mainText: {
     flex: 1,
-    fontFamily,
+    fontFamily: 'helveticaneue-thin',
     fontSize: 16,
     color: '#FFFFFF'
   }

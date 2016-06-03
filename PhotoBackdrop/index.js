@@ -34,7 +34,7 @@ class PhotoBackdrop extends Component {
     return (
       <Image
         style={styles.backdrop}
-        source={ this.state.photoSource }
+        source={this.state.photoSource}
         resizeMode='cover'>
         {this.props.children}
       </Image>
