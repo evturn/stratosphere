@@ -22,110 +22,120 @@ class Stratosphere extends Component {
     this.state = {
       forecast: null,
       text: '',
-      fetching: true
+      fetching: true,
+      message: 'Find some other location'
     }
   }
 
   componentDidMount() {
-    this.fetchData(this.createSearchRequestUrl('Prospect%20Heights,NY'))
+    this.fetchFromQuery('Prospect%20Heights,NY')
   }
 
-  setForecast(response) {
-    const {
-      weather: [ weather ],
-      main,
-      name
-    } = response
+  fetchFromCoordinate(lat, lon) {
+    this.fetchData(
+      `${api.route}lat=${lat}&lon=${lon}${api.units}&appid=${api.key}`
+    )
+  }
 
-    const farenheit = {
-      symbol: '°F',
-      current: Math.floor(main.temp),
-      low: Math.floor(main.temp_min),
-      high: Math.floor(main.temp_max)
-    }
+  fetchFromQuery(query) {
+    this.fetchData(
+      `${api.route}q=${query}${api.units}&appid=${api.key}`
+    )
+  }
 
+  setForecast({ weather, main, name }) {
     return {
+      fetching: false,
+      message: 'Find some other location',
       forecast: {
+        name,
         main: weather.main,
         description: weather.description,
         image: `http://openweathermap.org/img/w/${weather.icon}.png`,
-        name,
-        farenheit,
+        farenheit: {
+          symbol: '°F',
+          current: Math.floor(main.temp),
+          low: Math.floor(main.temp_min),
+          high: Math.floor(main.temp_max)
+        },
         celsius: {
           symbol: '°C',
-          current: Math.floor((farenheit.current - 32) / 1.8),
-          high: Math.floor((farenheit.high - 32) / 1.8),
-          low: Math.floor((farenheit.low - 32) / 1.8)
+          current: Math.floor((main.temp - 32) / 1.8),
+          high: Math.floor((main.temp_max - 32) / 1.8),
+          low: Math.floor((main.temp_min - 32) / 1.8)
         }
-      },
-      fetching: false
+      }
     }
   }
 
-  createCoordinateRequestUrl(lat, lon) {
-    return `${api.route}lat=${lat}&lon=${lon}${api.units}&appid=${api.key}`
-  }
+  handleResponse(x) {
+    if (x.cod !== 200) {
+      return {
+        ...this.state,
+        fetching: false,
+        message: 'No matches found'
+      }
+    }
 
-  createSearchRequestUrl(query) {
-    return `${api.route}q=${query}${api.units}&appid=${api.key}`
+    return this.setForecast({
+      weather: x.weather[0],
+      main: x.main,
+      name: x.name
+    })
   }
 
   fetchData(url) {
     this.setState({ fetching: true })
+
     fetch(url)
       .then(x => x.json())
-      .then(this.setForecast)
+      .then(x => this.handleResponse(x))
       .then(x => this.setState(x))
       .catch(e => console.warn(e))
   }
 
   handleCoordinateSubmit(lat, lon) {
-    this.fetchData(this.createCoordinateRequestUrl(lat, lon))
+    this.fetchFromCoordinate(lat, lon)
   }
 
   handleQuerySubmit(e) {
     this.setState({ text: '' })
-    this.fetchData(
-      this.createSearchRequestUrl(
-        e.nativeEvent.text.split(' ').join('%20')
-      )
+
+    this.fetchFromQuery(
+      e.nativeEvent.text.split(' ').join('%20')
     )
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.overlay}>
-
-          {this.state.forecast === null ? <Text>Loading...</Text> : (
-            <View>
-              <Forecast {...this.state.forecast} />
-
-              <View style={styles.row}>
-                <LocationButton
-                  fetching={this.state.fetching}
-                  onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+        <View style={styles.overlay}>{this.state.forecast !== null ? (
+          <View>
+            <Forecast {...this.state.forecast} />
+            <View style={styles.row}>
+              <LocationButton
+                fetching={this.state.fetching}
+                onGetCoords={(lat, lon) => this.handleCoordinateSubmit(lat, lon)}
+              />
+            </View>
+            <View style={styles.row}>
+              <View style={styles.inputView}>
+                <TextInput
+                  ref={i => this['🍟'] = i}
+                  style={styles.search}
+                  returnKeyType="go"
+                  onChangeText={text => this.setState({ text })}
+                  onSubmitEditing={e => this.handleQuerySubmit(e)}
+                  value={this.state.text}
+                  selectionColor="#ffffff"
                 />
               </View>
-
-              <View style={styles.row}>
-                <View style={styles.inputView}>
-                  <TextInput
-                    ref={i => this['🍟'] = i}
-                    style={styles.search}
-                    returnKeyType="go"
-                    onChangeText={text => this.setState({ text })}
-                    onSubmitEditing={e => this.handleQuerySubmit(e)}
-                    value={this.state.text}
-                    selectionColor="#ffffff"
-                  />
-                </View>
-              </View>
-              <Text style={styles.caption}>Find some other location</Text>
             </View>
-          )}
-        </View>
-
+            <Text style={styles.caption}>{this.state.message}</Text>
+          </View>
+          ) : (
+          <Text>Loading...</Text>
+        )}</View>
       </View>
     )
   }
