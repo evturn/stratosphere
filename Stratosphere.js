@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 import Forecast from './Forecast'
 import LocationButton from './LocationButton'
+import PhotoBackdrop from './PhotoBackdrop'
 
 const api = {
   route: 'http://api.openweathermap.org/data/2.5/weather?',
